@@ -1,0 +1,6 @@
+framework module Pods_BeautyShot {
+  umbrella header "Pods-BeautyShot-umbrella.h"
+
+  export *
+  module * { export * }
+}

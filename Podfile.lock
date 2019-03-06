@@ -1,0 +1,24 @@
+PODS:
+  - Masonry (1.1.0)
+  - PryntTrimmerView (3.0.0)
+  - Reveal-SDK (11)
+  - SnapKit (4.0.0)
+  - SteviaLayout (4.4.3)
+
+DEPENDENCIES:
+  - Masonry
+  - PryntTrimmerView
+  - Reveal-SDK (= 11)
+  - SnapKit (~> 4.0.0)
+  - SteviaLayout
+
+SPEC CHECKSUMS:
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  PryntTrimmerView: 53ac64053c7ce63cb3e27f54090f52da0734891d
+  Reveal-SDK: 7fa13d04bb55db61ff2342a990cf731d5159361d
+  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  SteviaLayout: ae5ee66101e03607a93c9b3773b84ab7ba7b3d17
+
+PODFILE CHECKSUM: b48b8566f4a83503c960e5cdbbdbc593c8cec30e
+
+COCOAPODS: 1.3.1
