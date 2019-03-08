@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 import UIKit
+import GLKit
 
 protocol YPPhotoCapture: class {
     
@@ -22,6 +23,9 @@ protocol YPPhotoCapture: class {
     func flipCamera()
     func shoot(completion: @escaping (Data) -> Void)
     var videoLayer: AVCaptureVideoPreviewLayer! { get set }
+    var videoPreView: GLKView!{get set}
+    var eaglContex: EAGLContext!{get set}
+    var ciContext: CIContext!{get set}
     var device: AVCaptureDevice? { get }
     
     // Used by Default extension

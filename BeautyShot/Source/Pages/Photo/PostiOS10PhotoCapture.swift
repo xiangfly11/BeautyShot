@@ -8,20 +8,24 @@
 
 import UIKit
 import AVFoundation
+import GLKit
 
 @available(iOS 10.0, *)
-class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDelegate {
-
+class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
+    var ciContext: CIContext!
     let sessionQueue = DispatchQueue(label: "YPCameraVCSerialQueue", qos: .background)
     let session = AVCaptureSession()
     var deviceInput: AVCaptureDeviceInput?
     var device: AVCaptureDevice? { return deviceInput?.device }
     private let photoOutput = AVCapturePhotoOutput()
-    var output: AVCaptureOutput { return photoOutput }
+    private let streamOutput = AVCaptureVideoDataOutput()
+    var output: AVCaptureOutput { return streamOutput }
     var isCaptureSessionSetup: Bool = false
     var isPreviewSetup: Bool = false
     var previewView: UIView!
     var videoLayer: AVCaptureVideoPreviewLayer!
+    var videoPreView: GLKView!
+    var eaglContex: EAGLContext!
     var currentFlashMode: YPFlashMode = .off
     var hasFlash: Bool {
         guard let device = device else { return false }
@@ -71,6 +75,8 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
         
         // Improve capture time by preparing output with the desired settings.
         photoOutput.setPreparedPhotoSettingsArray([newSettings()], completionHandler: nil)
+        
+        streamOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.stramOutputQueue.BeautyShot"))
     }
     
     // MARK: - Flash
@@ -99,6 +105,7 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
 
+    //MARK: --AVCapturePhotoCaptureDelegate--
     @available(iOS 11.0, *)
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         guard let data = photo.fileDataRepresentation() else { return }
@@ -117,5 +124,39 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
                                          previewPhotoSampleBuffer: previewPhotoSampleBuffer) {
             block?(data)
         }
+    }
+    
+    //MARK: --AVCaptureVideoDataOutputSampleBufferDelegate--
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
+        if let resultPixelBuffer = pixelBuffer {
+            let image = CIImage(cvPixelBuffer: resultPixelBuffer)
+            print("1111111")
+            
+            let outputImage = image.applyingFilter("CIPhotoEffectMono")
+//            let outputImageRef = outputImage.toCGImage()
+//            DispatchQueue.main.async {
+//                if let resultContents = outputImageRef {
+//                    self.videoLayer.contents = resultContents
+//                }
+//            }
+            DispatchQueue.main.async {
+                let sourceExtent = image.extent
+                let rect = sourceExtent
+                self.videoPreView.bindDrawable()
+                
+                if self.eaglContex != EAGLContext.current() {
+                    EAGLContext.setCurrent(self.eaglContex)
+                }
+                glClearColor(0.5, 0.5, 0.5, 1.0)
+                glClear(GLbitfield(GL_COLOR_BUFFER_BIT))
+                glEnable(GLenum(GL_BLEND))
+                glBlendFunc(GLenum(GL_ONE), GLenum(GL_ONE_MINUS_DST_ALPHA))
+                
+                self.ciContext.draw(outputImage, in: CGRect(x: 0, y: 0, width: self.videoPreView.drawableWidth, height: self.videoPreView.drawableHeight), from: rect)
+                self.videoPreView.display()
+            }
+        }
+       
     }
 }

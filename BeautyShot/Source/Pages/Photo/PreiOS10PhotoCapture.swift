@@ -9,9 +9,12 @@
 import Foundation
 import AVFoundation
 import UIKit
+import GLKit
 
 class PreiOS10PhotoCapture: YPPhotoCapture {
-
+    var videoPreView: GLKView!
+    var eaglContex: EAGLContext!
+    var ciContext: CIContext!
     let sessionQueue = DispatchQueue(label: "YPCameraVCSerialQueue", qos: .background)
     let session = AVCaptureSession()
     var deviceInput: AVCaptureDeviceInput?

@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import GLKit
 
 extension YPPhotoCapture {
     
@@ -26,9 +27,10 @@ extension YPPhotoCapture {
                 session.addInput(videoInput)
             }
             if session.canAddOutput(output) {
-                session.addOutput(output)
                 configure()
+                session.addOutput(output)
             }
+            
         }
         session.commitConfiguration()
         isCaptureSessionSetup = true
@@ -87,11 +89,17 @@ extension YPPhotoCapture {
     }
     
     func setupPreview() {
-        videoLayer = AVCaptureVideoPreviewLayer(session: session)
         DispatchQueue.main.async {
-            self.videoLayer.frame = self.previewView.bounds
-            self.videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-            self.previewView.layer.addSublayer(self.videoLayer)
+            self.eaglContex = EAGLContext.init(api: .openGLES2)
+            self.videoPreView = GLKView.init(frame: self.previewView.bounds, context: self.eaglContex)
+            self.videoPreView.enableSetNeedsDisplay = false
+            self.videoPreView.transform = CGAffineTransform(rotationAngle: CGFloat(M_PI_2))
+          
+            self.videoPreView.frame = self.previewView.bounds
+            self.previewView.addSubview(self.videoPreView)
+            self.ciContext = CIContext(eaglContext: self.eaglContex, options: nil)
+            self.videoPreView.bindDrawable()
+            
         }
     }
     
