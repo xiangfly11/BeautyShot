@@ -12,14 +12,16 @@ import GLKit
 
 @available(iOS 10.0, *)
 class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
+    
     var ciContext: CIContext!
     let sessionQueue = DispatchQueue(label: "YPCameraVCSerialQueue", qos: .background)
     let session = AVCaptureSession()
     var deviceInput: AVCaptureDeviceInput?
     var device: AVCaptureDevice? { return deviceInput?.device }
-    private let photoOutput = AVCapturePhotoOutput()
-    private let streamOutput = AVCaptureVideoDataOutput()
-    var output: AVCaptureOutput { return streamOutput }
+    let photoOutput = AVCapturePhotoOutput()
+    let videoStreamOutput = AVCaptureVideoDataOutput()
+    var output: AVCaptureOutput { return photoOutput }
+    var streamOutput: AVCaptureOutput {return videoStreamOutput}
     var isCaptureSessionSetup: Bool = false
     var isPreviewSetup: Bool = false
     var previewView: UIView!
@@ -33,7 +35,29 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
     }
     var block: ((Data) -> Void)?
     
+    // MARK: -- Init --
+    override init() {
+        super.init()
+    }
+    
+    
     // MARK: - Configuration
+    
+    func configure() {
+        
+    }
+    
+    func configurePhotoOutput() {
+        photoOutput.isHighResolutionCaptureEnabled = true
+        
+        // Improve capture time by preparing output with the desired settings.
+        photoOutput.setPreparedPhotoSettingsArray([newSettings()], completionHandler: nil)
+    }
+    
+    func configureVideoStreamOutput() {
+        videoStreamOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.stramOutputQueue.BeautyShot"))
+    }
+    
     
     private func newSettings() -> AVCapturePhotoSettings {
         var settings = AVCapturePhotoSettings()
@@ -69,15 +93,7 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
         }
         return settings
     }
-    
-    func configure() {
-        photoOutput.isHighResolutionCaptureEnabled = true
-        
-        // Improve capture time by preparing output with the desired settings.
-        photoOutput.setPreparedPhotoSettingsArray([newSettings()], completionHandler: nil)
-        
-        streamOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "com.stramOutputQueue.BeautyShot"))
-    }
+
     
     // MARK: - Flash
     
@@ -134,12 +150,6 @@ class PostiOS10PhotoCapture: NSObject, YPPhotoCapture, AVCapturePhotoCaptureDele
             print("1111111")
             
             let outputImage = image.applyingFilter("CIPhotoEffectMono")
-//            let outputImageRef = outputImage.toCGImage()
-//            DispatchQueue.main.async {
-//                if let resultContents = outputImageRef {
-//                    self.videoLayer.contents = resultContents
-//                }
-//            }
             DispatchQueue.main.async {
                 let sourceExtent = image.extent
                 let rect = sourceExtent

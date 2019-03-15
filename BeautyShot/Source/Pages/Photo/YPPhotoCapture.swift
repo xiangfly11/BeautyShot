@@ -35,8 +35,11 @@ protocol YPPhotoCapture: class {
     var sessionQueue: DispatchQueue { get }
     var session: AVCaptureSession { get }
     var output: AVCaptureOutput { get }
+    var streamOutput: AVCaptureOutput {get}
     var deviceInput: AVCaptureDeviceInput? { get set }
     func configure()
+    func configurePhotoOutput()
+    func configureVideoStreamOutput()
 }
 
 func newPhotoCapture() -> YPPhotoCapture {

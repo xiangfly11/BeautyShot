@@ -11,7 +11,8 @@ import AVFoundation
 import UIKit
 import GLKit
 
-class PreiOS10PhotoCapture: YPPhotoCapture {
+class PreiOS10PhotoCapture: NSObject,YPPhotoCapture {
+    var streamOutput: AVCaptureOutput {return imageOutput}
     var videoPreView: GLKView!
     var eaglContex: EAGLContext!
     var ciContext: CIContext!
@@ -31,9 +32,24 @@ class PreiOS10PhotoCapture: YPPhotoCapture {
         return device.hasFlash
     }
     
+    // MARK: -- Init --
+    override init() {
+        super.init()
+    }
+    
+    
     // MARK: - Configuration
     
     func configure() { }
+    
+    
+    func configurePhotoOutput() {
+        
+    }
+    
+    func configureVideoStreamOutput() {
+        
+    }
     
     // MARK: - Flash
     

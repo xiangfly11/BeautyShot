@@ -27,8 +27,14 @@ extension YPPhotoCapture {
                 session.addInput(videoInput)
             }
             if session.canAddOutput(output) {
-                configure()
+//                configure()
+                configurePhotoOutput()
                 session.addOutput(output)
+            }
+            
+            if session.canAddOutput(streamOutput) {
+                configureVideoStreamOutput()
+                session.addOutput(streamOutput)
             }
             
         }

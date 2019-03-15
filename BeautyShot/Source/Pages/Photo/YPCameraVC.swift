@@ -18,7 +18,7 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
     override public func loadView() { view = v }
 
     public required init() {
-        self.v = YPCameraView(overlayView: YPConfig.overlayView)
+        self.v = YPCameraView.init(overlayView: YPConfig.overlayView, type: .cameraType)
         super.init(nibName: nil, bundle: nil)
         title = YPConfig.wordings.cameraTitle
     }
@@ -38,6 +38,7 @@ public class YPCameraVC: UIViewController, UIGestureRecognizerDelegate, YPPermis
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.focusTapped(_:)))
         tapRecognizer.delegate = self
         v.previewViewContainer.addGestureRecognizer(tapRecognizer)
+        
     }
     
     func start() {

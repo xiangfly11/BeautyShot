@@ -13,7 +13,7 @@ public class YPVideoCaptureVC: UIViewController, YPPermissionCheckable {
     public var didCaptureVideo: ((URL) -> Void)?
     
     private let videoHelper = YPVideoCaptureHelper()
-    private let v = YPCameraView(overlayView: nil)
+    private let v = YPCameraView.init(overlayView: nil, type: .videoType)
     private var viewState = ViewState()
     
     // MARK: - Init
