@@ -72,10 +72,11 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <PathRunnable
-         runnableDebuggingMode = "0"
-         FilePath = "/&lt;placeholder&gt;">
-      </PathRunnable>
+      <RemoteRunnable
+         runnableDebuggingMode = "1"
+         BundleIdentifier = "XiaoFan-Wang.BeautyShot"
+         RemotePath = "/var/containers/Bundle/Application/0913DBBE-3735-4337-B4D1-166232D9596B/BeautyShot.app">
+      </RemoteRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
